@@ -1,0 +1,7 @@
+---
+import Layout from '../layouts/Layout.astro'
+import PostDetailPage from '../components/PostDetailPage'
+---
+<Layout>
+  <PostDetailPage client:only="react" />
+</Layout>
