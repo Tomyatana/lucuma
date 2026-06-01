@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { fetchProfile } from '../lib/db'
+import { ensureProfile } from '../lib/db'
 import type { Profile } from '../lib/db'
 
 export default function Navbar() {
@@ -12,7 +12,7 @@ export default function Navbar() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) return
       setUserId(session.user.id)
-      fetchProfile(session.user.id).then(p => { if (p) setProfile(p) }).catch(() => {})
+      ensureProfile(session.user.id, session.user.email).then(setProfile).catch(() => {})
     })
   }, [])
 

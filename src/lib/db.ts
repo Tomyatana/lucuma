@@ -89,6 +89,20 @@ export async function fetchProfile(userId: string): Promise<Profile | null> {
   return data as Profile
 }
 
+// Crea el perfil si no existe (para usuarios previos al trigger)
+export async function ensureProfile(userId: string, email?: string): Promise<Profile> {
+  const existing = await fetchProfile(userId)
+  if (existing) return existing
+  const username = email ? email.split('@')[0] : `user_${userId.slice(0, 8)}`
+  const { data, error } = await supabase
+    .from('profiles')
+    .insert({ id: userId, username })
+    .select()
+    .single()
+  if (error) throw error
+  return data as Profile
+}
+
 export async function updateProfile(updates: Partial<Omit<Profile, 'id' | 'created_at'>> & { id: string }): Promise<Profile> {
   const { data, error } = await supabase
     .from('profiles')
