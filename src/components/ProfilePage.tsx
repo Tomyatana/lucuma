@@ -4,6 +4,7 @@ import { fetchProfile, fetchUserPosts, deletePost } from '../lib/db'
 import type { Post, Profile } from '../lib/db'
 import Navbar from './Navbar'
 import PostCard from './PostCard'
+import EditProfileModal from './EditProfileModal'
 
 export default function ProfilePage() {
   const id = useMemo(() => new URLSearchParams(window.location.search).get('id') ?? '', [])
@@ -12,6 +13,7 @@ export default function ProfilePage() {
   const [posts, setPosts]           = useState<Post[]>([])
   const [loading, setLoading]       = useState(true)
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+  const [editing, setEditing]       = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -66,6 +68,11 @@ export default function ProfilePage() {
                 {profile?.bio && <p className="profile-bio">{profile.bio}</p>}
                 <p className="profile-stats">{posts.length} publicación{posts.length !== 1 ? 'es' : ''}</p>
               </div>
+              {profile && currentUserId === id && (
+                <button className="profile-edit-btn" onClick={() => setEditing(true)}>
+                  Editar perfil
+                </button>
+              )}
             </div>
 
             {posts.length === 0 ? (
@@ -83,6 +90,14 @@ export default function ProfilePage() {
           </>
         )}
       </main>
+
+      {editing && profile && (
+        <EditProfileModal
+          profile={profile}
+          onSaved={setProfile}
+          onClose={() => setEditing(false)}
+        />
+      )}
     </div>
   )
 }
