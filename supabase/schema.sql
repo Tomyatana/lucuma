@@ -13,9 +13,11 @@ create table if not exists public.profiles (
 );
 
 -- Tabla de posts (publicaciones y respuestas)
+-- user_id referencia profiles(id) — y profiles.id referencia auth.users(id) —
+-- para que PostgREST pueda embeber el perfil en cada post (select *, profiles(*))
 create table if not exists public.posts (
   id          uuid default gen_random_uuid() primary key,
-  user_id     uuid references auth.users(id) on delete cascade not null,
+  user_id     uuid references public.profiles(id) on delete cascade not null,
   content     text not null check (char_length(content) between 1 and 280),
   parent_id   uuid references public.posts(id) on delete cascade,
   created_at  timestamp with time zone default now() not null
