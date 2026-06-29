@@ -4,6 +4,8 @@ Red social de microblogging (estilo Twitter/X): los usuarios publican textos cor
 y pueden responderse entre sí, generando un ida y vuelta. Cada usuario tiene su
 perfil editable.
 
+**🌐 Producción:** https://lucuma.vercel.app
+
 Trabajo práctico — **Aplicación Serverless** (frontend + backend serverless con
 autenticación y persistencia en la nube).
 
@@ -127,8 +129,29 @@ editar o eliminar lo suyo.
 
 ---
 
-## 🌿 Ramas
+## 🌿 Ramas y convención de nombres
 
-- `main` — versión funcional (estable).
-- `dev` — integración.
-- `Aaronfront` / `agustin...` — ramas de trabajo por integrante.
+- `main` — versión estable, desplegada en producción. Nada se mergea directo: todo entra por PR revisado.
+- `dev` — rama de integración.
+- Ramas de trabajo, según el tipo de cambio:
+  - `feature/<nombre-corto>` — nueva funcionalidad. Ej: `feature/editar-perfil`.
+  - `fix/<nombre-corto>` — corrección de bug. Ej: `fix/feed-perfil-nulo`.
+
+### Flujo de trabajo
+1. Cada tarea arranca con un **issue** (título, descripción, asignado).
+2. Se trabaja en una rama `feature/...` o `fix/...`.
+3. Se abre un **PR** que referencia el issue (`closes #N`). El otro integrante lo
+   revisa con al menos un comentario y lo aprueba antes de mergear.
+4. El **pipeline de CI** (lint → tests → build) debe estar en verde para poder mergear.
+5. Al mergear a `main`, el pipeline **despliega automáticamente** a producción.
+
+---
+
+## ✅ Calidad y CI/CD
+
+- **Tests unitarios:** `npm run test` (Vitest) — lógica de negocio en `src/lib/`.
+- **Tests E2E:** `npm run test:e2e` (Playwright) — flujo de autenticación.
+- **Lint:** `npm run lint` (ESLint).
+- **Pipeline:** `.github/workflows/ci-cd.yml` corre lint → tests → build → deploy en
+  cada push/PR a `main`. El deploy solo ocurre si todo lo anterior pasa.
+- Las decisiones de calidad están documentadas en [`CALIDAD.md`](CALIDAD.md).
