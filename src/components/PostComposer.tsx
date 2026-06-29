@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { createPost } from '../lib/db'
 import type { Post } from '../lib/db'
-
-const MAX = 280
+import { validatePostContent, POST_MAX_LENGTH as MAX } from '../lib/validation'
 
 interface Props {
   parentId?:   string
@@ -17,7 +16,8 @@ export default function PostComposer({ parentId, placeholder = '¿Qué estás pe
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!content.trim()) return
+    const check = validatePostContent(content)
+    if (!check.valid) { setError(check.error ?? 'Contenido inválido'); return }
     setLoading(true)
     setError(null)
     try {

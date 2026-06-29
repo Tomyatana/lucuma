@@ -1,22 +1,11 @@
 import type { Post } from '../lib/db'
+import { timeAgo } from '../lib/format'
 
 interface Props {
   post: Post
   currentUserId?: string
   onDelete?: (id: string) => void
   showReplyLink?: boolean
-}
-
-function timeAgo(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime()
-  const mins  = Math.floor(diff / 60_000)
-  if (mins < 1)  return 'ahora'
-  if (mins < 60) return `${mins}m`
-  const hours = Math.floor(mins / 60)
-  if (hours < 24) return `${hours}h`
-  const days = Math.floor(hours / 24)
-  if (days < 7)  return `${days}d`
-  return new Date(dateStr).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })
 }
 
 export default function PostCard({ post, currentUserId, onDelete, showReplyLink = true }: Props) {

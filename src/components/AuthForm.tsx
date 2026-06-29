@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
+import { validateUsername } from '../lib/validation'
 
 export default function AuthForm() {
   const [mode, setMode]         = useState<'login' | 'register'>('login')
@@ -24,7 +25,8 @@ export default function AuthForm() {
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw error
       } else {
-        if (username.trim().length < 3) throw new Error('El usuario debe tener al menos 3 caracteres')
+        const check = validateUsername(username)
+        if (!check.valid) throw new Error(check.error)
         const { error } = await supabase.auth.signUp({
           email,
           password,
